@@ -28,7 +28,7 @@ app.post("/users", async (req, res) => {
         console.log(nome, email, cpf, apelido);
 
         const result = await pool.query(
-            "INSERT INTO users (nome, email, cpf, apelido) VALUES(?,?,?,?);",
+            "INSERT INTO user (nome, email, cpf, apelido) VALUES(?,?,?,?);",
             [nome, email, cpf, apelido]
         );
         res.status(201).json({msg: "usuario criado com sucesso"});
@@ -42,7 +42,7 @@ app.post("/users", async (req, res) => {
 // R
 app.get("/users", async (req, res) =>{
     try{
-        const rows = await pool.query("SELECT * FROM  users;");
+        const rows = await pool.query("SELECT * FROM  user;");
         res.status(200).json(rows[0]);
     }
     catch(erro){
@@ -78,10 +78,12 @@ app.get("/users", async (req, res) =>{
  app.delete("/users/:id", async (req, res) => {
     try{
         const id = req.params.id;
-        const rows = await pool.query("DELETE  FROM  users WHERE id = ?;",
-        [id]
+        const rows = await pool.query("DELETE  FROM  user WHERE id = ?;",
         );
-
+        if(rows[0].affectedRows == 0){
+            throw new Error("Erro ao deletar usuário!")
+        }
+        
         res.status(200).json({msg: "usuario apagado com sucesso"});
     }
     catch(error){
